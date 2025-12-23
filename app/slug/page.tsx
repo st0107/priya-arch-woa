@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
-import styles from "./page.module.css";
 
 // ----------------------
 // Types
@@ -57,35 +56,37 @@ interface GalleryProps {
 function Gallery({ images, currentIndex, onChangeIndex, onSelect }: GalleryProps) {
   return (
     <div>
-      <div className={styles.galleryMain}>
+      <div className="relative mb-4 bg-gray-100 rounded-lg overflow-hidden h-96">
         <img
           src={images[currentIndex]}
           alt={`Plan image ${currentIndex + 1}`}
-          className={styles.galleryImage}
+          className="w-full h-full object-cover cursor-pointer"
           onClick={() => onSelect(images[currentIndex])}
         />
         <button
           onClick={() => onChangeIndex((currentIndex - 1 + images.length) % images.length)}
-          className={styles.galleryPrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2"
           aria-label="Previous image"
         >
           <ChevronLeft />
         </button>
         <button
           onClick={() => onChangeIndex((currentIndex + 1) % images.length)}
-          className={styles.galleryNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full p-2"
           aria-label="Next image"
         >
           <ChevronRight />
         </button>
       </div>
-      <div className={styles.galleryThumbs}>
+      <div className="flex gap-2">
         {images.map((img, i) => (
           <img
             key={i}
             src={img}
             alt={`Thumbnail ${i + 1}`}
-            className={`${styles.thumb} ${i === currentIndex ? styles.activeThumb : ""}`}
+            className={`w-20 h-20 object-cover rounded cursor-pointer transition-transform ${
+              i === currentIndex ? "ring-2 ring-blue-600" : "hover:scale-105"
+            }`}
             onClick={() => onChangeIndex(i)}
           />
         ))}
@@ -103,24 +104,26 @@ interface DetailsProps {
 
 function Details({ plan }: DetailsProps) {
   return (
-    <div className={styles.details}>
-      <h1 className={styles.price}>{plan.price}</h1>
-      <p className={styles.title}>{plan.title}</p>
+    <div className="bg-gray-50 rounded-lg p-6 space-y-4">
+      <h1 className="text-3xl font-bold text-blue-600">{plan.price}</h1>
+      <p className="text-gray-700 text-lg">{plan.title}</p>
 
-      <div className={styles.specs}>
+      {/* Specs */}
+      <div className="border-t border-b border-gray-200 py-4 space-y-2 text-sm">
         {Object.entries(plan.specs).map(([k, v]) => (
-          <div key={k} className={styles.specRow}>
-            <strong className="capitalize">{k}</strong>
+          <div key={k} className="flex justify-between capitalize">
+            <strong>{k}</strong>
             <span>{v}</span>
           </div>
         ))}
       </div>
 
-      <div className={styles.features}>
+      {/* Features */}
+      <div className="space-y-1">
         {Object.entries(plan.features).map(([k, v]) => (
-          <div key={k} className={styles.featureRow}>
-            {v ? <Check size={16} className={styles.featureYes} /> : <X size={16} className={styles.featureNo} />}
-            <span className="capitalize">{k}</span>
+          <div key={k} className="flex items-center gap-2 text-sm capitalize">
+            {v ? <Check className="text-green-500" /> : <X className="text-red-500" />}
+            <span>{k}</span>
           </div>
         ))}
       </div>
@@ -138,8 +141,16 @@ interface LightboxProps {
 
 function Lightbox({ image, onClose }: LightboxProps) {
   return (
-    <div className={styles.lightbox} onClick={onClose}>
-      <img src={image} alt="Fullscreen Plan" className={styles.lightboxImg} onClick={(e) => e.stopPropagation()} />
+    <div
+      className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <img
+        src={image}
+        alt="Fullscreen Plan"
+        className="max-w-4xl rounded cursor-pointer"
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   );
 }
@@ -156,23 +167,26 @@ function PlanContent({ slug }: PlanContentProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  if (!plan) return <div className={styles.notFound}>Plan not found</div>;
+  if (!plan)
+    return <div className="p-16 text-center text-gray-700 text-lg">Plan not found</div>;
 
   return (
-    <main className={styles.container}>
-      <div className={styles.grid}>
-        <div className={styles.galleryWrapper}>
-          <Gallery
-            images={plan.images}
-            currentIndex={currentImageIndex}
-            onChangeIndex={setCurrentImageIndex}
-            onSelect={setSelectedImage}
-          />
+    <main className="min-h-screen bg-white py-16">
+      <div className="mx-auto max-w-7xl px-4 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16">
+          <div className="lg:col-span-2">
+            <Gallery
+              images={plan.images}
+              currentIndex={currentImageIndex}
+              onChangeIndex={setCurrentImageIndex}
+              onSelect={setSelectedImage}
+            />
+          </div>
+          <Details plan={plan} />
         </div>
-        <Details plan={plan} />
-      </div>
 
-      {selectedImage && <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />}
+        {selectedImage && <Lightbox image={selectedImage} onClose={() => setSelectedImage(null)} />}
+      </div>
     </main>
   );
 }
@@ -181,7 +195,6 @@ function PlanContent({ slug }: PlanContentProps) {
 // Exported Page
 // ----------------------
 export default function PlansPage() {
-  // Get slug from URL using Next.js useSearchParams
   const searchParams = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
   const slug = searchParams?.get("slug") ?? undefined;
 
