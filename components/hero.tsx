@@ -4,13 +4,13 @@ import Image from "next/image"
 
 export default function Hero() {
   return (
-    <div className="relative bg-white min-h-[600px] flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative bg-white min-h-[90vh] flex flex-col items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src="/modern-home-design.jpg"
+          src="/PI_8_1.jpeg"
           alt="Modern architecture home"
           fill
-          className="object-cover opacity-40"
+          className="object-cover opacity-70"
           priority
         />
       </div>
@@ -20,9 +20,14 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-20 flex flex-col items-center justify-center gap-6 text-center px-4">
-        {/* Logo placeholder */}
-        <div className="bg-gradient-to-br from-blue-600 to-red-600 rounded-2xl w-24 h-24 flex items-center justify-center text-white font-bold text-4xl shadow-lg">
-          PA
+        <div className="relative rounded-2xl w-24 h-24 flex items-center justify-center shadow-lg overflow-hidden">
+          <Image
+            src="/logo.jpeg"
+            alt="Modern architecture home"
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
 
         <div>

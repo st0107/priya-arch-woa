@@ -1,15 +1,24 @@
+import Image from "next/image";
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="bg-gray-900 text-gray-300 py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="bg-gradient-to-br from-blue-600 to-red-600 rounded-lg w-10 h-10 flex items-center justify-center text-white font-bold text-sm">
-                PA
-              </div>
-              <span className="font-bold text-white">Priya Architecture</span>
+            <Link href="/" className="flex items-center gap-2 mb-4">
+            <div className="relative rounded-lg w-10 h-10 flex items-center justify-center shadow-lg overflow-hidden">
+              <Image
+                src="/logo.jpeg"
+                alt="Modern architecture home"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
+            <span className="text-xl font-bold text-white hidden sm:inline">Priya Architecture</span>
+          </Link>
             <p className="text-sm">Making house design easy, modern and vastu-friendly.</p>
           </div>
 
