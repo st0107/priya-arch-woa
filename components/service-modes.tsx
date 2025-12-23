@@ -1,3 +1,4 @@
+"use-client"
 export default function ServiceModes() {
   return (
     <section className="py-16 bg-gray-50">

@@ -2,38 +2,73 @@
 
 import { useState } from "react"
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { useSearchParams } from "next/navigation"
 
-const PLAN_DETAIL = {
-  slug: "23x50-north",
-  title: "23x50 North - G+1",
-  price: "₹ 499/-",
-  images: ["/house-plan-view.jpg", "/detailed-floor-plan.jpg", "/elevation-view.jpg"],
-  features: {
-    "2d-planning": true,
-    "planning-detail": true,
-    elevation: true,
-    interior: false,
+interface PlanFeatures {
+  "2d-planning": boolean
+  "planning-detail": boolean
+  elevation: boolean
+  interior: boolean
+}
+
+interface PlanSpecs {
+  floor: string
+  plotWidth: string
+  area: string
+  facing: string
+}
+
+interface Plan {
+  slug: string
+  title: string
+  price: string
+  images: string[]
+  features: PlanFeatures
+  specs: PlanSpecs
+  description: string
+}
+
+const PLAN_DETAIL: Record<string, Plan> = {
+  "23x50-north": {
+    slug: "23x50-north",
+    title: "23x50 North - G+1",
+    price: "₹ 499/-",
+    images: ["/house-plan-view.jpg", "/detailed-floor-plan.jpg", "/elevation-view.jpg"],
+    features: {
+      "2d-planning": true,
+      "planning-detail": true,
+      elevation: true,
+      interior: false,
+    },
+    specs: {
+      floor: "G+1",
+      plotWidth: "23x50",
+      area: "1150 sqft",
+      facing: "North",
+    },
+    description:
+      "A beautifully designed 2-bedroom home with open living space and efficient kitchen layout. Perfect for small families looking for a modern, compact home.",
   },
-  specs: {
-    floor: "G+1",
-    plotWidth: "23x50",
-    area: "1150 sqft",
-    facing: "North",
-  },
-  description:
-    "A beautifully designed 2-bedroom home with open living space and efficient kitchen layout. Perfect for small families looking for a modern, compact home.",
 }
 
 export default function PlanDetailPage() {
+  const searchParams = useSearchParams()
+  const planSlug = searchParams.get("slug")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
+  const plans = planSlug ? PLAN_DETAIL[planSlug] : null
+
+  if (!plans) {
+    return <div className="p-10">Plan not found</div>
+  }
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % PLAN_DETAIL.images.length)
+    setCurrentImageIndex((prev) => (prev + 1) % plans.images.length)
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + PLAN_DETAIL.images.length) % PLAN_DETAIL.images.length)
+    setCurrentImageIndex((prev) => (prev - 1 + plans.images.length) % plans.images.length)
   }
 
   return (
@@ -45,10 +80,10 @@ export default function PlanDetailPage() {
           <div className="lg:col-span-2">
             <div className="relative mb-4 bg-gray-100 rounded-lg overflow-hidden h-96">
               <img
-                src={PLAN_DETAIL.images[currentImageIndex] || "/placeholder.svg"}
+                src={plans.images[currentImageIndex] || "/placeholder.svg"}
                 alt="Plan view"
                 className="w-full h-full object-cover cursor-pointer"
-                onClick={() => setSelectedImage(PLAN_DETAIL.images[currentImageIndex])}
+                onClick={() => setSelectedImage(plans.images[currentImageIndex])}
               />
               <button
                 onClick={prevImage}
@@ -66,7 +101,7 @@ export default function PlanDetailPage() {
 
             {/* Thumbnails */}
             <div className="flex gap-2">
-              {PLAN_DETAIL.images.map((img, idx) => (
+              {plans.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setCurrentImageIndex(idx)}
@@ -87,33 +122,23 @@ export default function PlanDetailPage() {
           {/* Right - Details */}
           <div className="bg-gray-50 rounded-lg p-6 h-fit">
             <p className="text-gray-600 text-sm mb-2">Starting From</p>
-            <h1 className="text-4xl font-bold text-blue-600 mb-2">{PLAN_DETAIL.price}</h1>
-            <p className="text-gray-600 mb-6">{PLAN_DETAIL.title}</p>
+            <h1 className="text-4xl font-bold text-blue-600 mb-2">{plans.price}</h1>
+            <p className="text-gray-600 mb-6">{plans.title}</p>
 
             {/* Specs Table */}
             <div className="border-t border-b border-gray-200 py-4 mb-6 space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="font-bold text-gray-900">Floor</span>
-                <span className="text-gray-600">{PLAN_DETAIL.specs.floor}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-gray-900">Plot Width</span>
-                <span className="text-gray-600">{PLAN_DETAIL.specs.plotWidth}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-gray-900">Area</span>
-                <span className="text-gray-600">{PLAN_DETAIL.specs.area}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-bold text-gray-900">Facing</span>
-                <span className="text-gray-600">{PLAN_DETAIL.specs.facing}</span>
-              </div>
+              {Object.entries(plans.specs).map(([key, value]) => (
+                <div key={key} className="flex justify-between">
+                  <span className="font-bold text-gray-900 capitalize">{key.replace("-", " ")}</span>
+                  <span className="text-gray-600">{value}</span>
+                </div>
+              ))}
             </div>
 
             {/* Features */}
             <div className="mb-6 space-y-2">
               <p className="font-bold text-gray-900 text-sm mb-3">Included Features</p>
-              {Object.entries(PLAN_DETAIL.features).map(([feature, included]) => (
+              {Object.entries(plans.features).map(([feature, included]) => (
                 <div key={feature} className="flex items-center gap-2 text-sm">
                   {included ? (
                     <Check size={16} className="text-green-500 flex-shrink-0" />
@@ -141,7 +166,7 @@ export default function PlanDetailPage() {
         <div>
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Detailed Planning</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {PLAN_DETAIL.images.map((img, idx) => (
+            {plans.images.map((img, idx) => (
               <div
                 key={idx}
                 className="bg-gray-100 rounded-lg overflow-hidden cursor-pointer group"
