@@ -17,11 +17,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: npm
+          node-version: "20.9.0"
+          cache: "npm"
+
+      - name: Verify Node version
+        run: node -v
 
       - name: Install dependencies
         run: npm ci
@@ -40,9 +43,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
