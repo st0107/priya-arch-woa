@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useSearchParams } from "next/navigation"
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react"
 
 interface PlanFeatures {
@@ -171,8 +170,8 @@ function Lightbox({ image, onClose }: LightboxProps) {
 // Main PlanContent
 // ----------------------
 function PlanContent() {
-  const searchParams = useSearchParams()
-  const planSlug = searchParams.get("slug")
+  const searchParams = new URLSearchParams(window.location.search);
+  const planSlug = searchParams.get("slug");
   const plan = planSlug ? PLAN_DETAIL[planSlug] : null
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
