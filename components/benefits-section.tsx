@@ -1,3 +1,4 @@
+"use-client"
 export default function BenefitsSection() {
   return (
     <section className="py-16 bg-white">

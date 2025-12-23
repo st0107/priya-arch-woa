@@ -1,3 +1,4 @@
+"use-client"
 export default function StatsSection() {
   const stats = [
     { label: "Latest Designs", value: "2325+" },

@@ -1,3 +1,5 @@
+"use-client"
+
 import PlanCard from "@/components/plan-card"
 import Link from "next/link"
 
